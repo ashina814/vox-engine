@@ -1,0 +1,6 @@
+name: synthetic
+raw_dir: dataset/synthetic/raw
+processed_dir: dataset/synthetic/processed
+quarantine_dir: dataset/synthetic/quarantine
+index_path: dataset/synthetic/index.parquet
+n_styles: 3

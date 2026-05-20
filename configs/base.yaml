@@ -1,0 +1,36 @@
+defaults:
+  - _self_
+  - data: opensinger
+  - train: smoke
+  - inference: default
+
+# Model defaults are pulled from src/vox/models/* dataclasses; override via CLI
+# (e.g. `model.hidden=384`) once a full model config tree is wired in.
+
+# Override these from the CLI when running scripts/infer.py.
+input_wav: null
+output_wav: vox_out.wav
+ckpt_path: null
+
+audio:
+  sr: 44100
+  n_mels: 128
+  n_fft: 2048
+  hop: 512
+  win: 2048
+
+chunking:
+  min_s: 5.0
+  max_s: 10.0
+  silence_db: -40.0
+  min_silence_s: 0.3
+
+qa:
+  f0_jump_threshold: 0.05
+  f0_min_hz: 50.0
+  f0_max_hz: 800.0
+  energy_std_min: 0.02
+  silence_ratio_max: 0.5
+  min_duration_s: 2.0
+  max_duration_s: 12.0
+  clip_ratio_max: 0.001

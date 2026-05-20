@@ -1,0 +1,19 @@
+# 100k steps — RunPod RTX 4090
+max_steps: 100000
+log_interval: 100
+val_interval: 1000
+ckpt_interval: 5000
+batch_size: 16
+grad_accum: 2
+optimizer:
+  name: AdamW
+  lr: 2.0e-4
+  betas: [0.9, 0.98]
+  weight_decay: 0.01
+scheduler:
+  name: cosine_with_warmup
+  warmup_steps: 2000
+model:
+  hidden: 256
+  num_blocks: 8
+  num_layers: 2

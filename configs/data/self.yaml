@@ -1,0 +1,7 @@
+# Phase B: your own voice data
+name: self
+raw_dir: dataset/raw
+processed_dir: dataset/processed
+quarantine_dir: dataset/quarantine
+index_path: dataset/index.parquet
+n_styles: 3   # normal / whisper / power

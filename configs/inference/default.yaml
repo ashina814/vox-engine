@@ -1,0 +1,6 @@
+num_diffusion_steps: 50
+autotune_strength: 0.8
+target_key: "C"
+style_weights: [1.0, 0.0, 0.0]
+skip_content: false
+

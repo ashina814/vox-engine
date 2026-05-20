@@ -1,0 +1,6 @@
+name: opensinger
+raw_dir: dataset/raw
+processed_dir: dataset/processed
+quarantine_dir: dataset/quarantine
+index_path: dataset/index.parquet
+n_styles: 1   # OpenSinger: no style labels, single-style multi-speaker

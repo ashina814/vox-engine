@@ -1,0 +1,11 @@
+# 1 step, terminates instantly — used in CI smoke test
+max_steps: 1
+log_interval: 1
+val_interval: 1
+ckpt_interval: 9999
+batch_size: 2
+grad_accum: 1
+model:
+  hidden: 64
+  num_blocks: 2
+  num_layers: 1

@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+dist/
+build/
+*.egg-info/
+
+# uv: uv.lock IS committed for reproducible installs.
+
+# Data
+dataset/
+*.npy
+*.wav
+*.flac
+*.mp3
+
+# Checkpoints
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+
+# Logs
+wandb/
+runs/
+logs/
+*.log
+
+# Hydra
+outputs/
+multirun/
+.hydra/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+
+# Claude Code local settings (user-specific permission allowlist)
+.claude/settings.local.json
