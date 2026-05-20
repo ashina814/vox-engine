@@ -1,6 +1,11 @@
 import torch
 
-from vox.training.optim import OptimConfig, build_optimizer, build_scheduler, cosine_with_warmup_lambda
+from vox.training.optim import (
+    OptimConfig,
+    build_optimizer,
+    build_scheduler,
+    cosine_with_warmup_lambda,
+)
 
 
 def test_warmup_linear_ramp():

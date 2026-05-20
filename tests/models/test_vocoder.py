@@ -1,5 +1,5 @@
-import torch
 import pytest
+import torch
 
 from vox.models.vocoder.nsf_hifigan import NSFHifiGANWrapper
 

@@ -15,7 +15,6 @@ from typing import Callable, Sequence
 
 import numpy as np
 
-
 # Callable accepting (T,) float32 audio at sr and returning a vector of
 # class logits or probabilities with shape (n_classes,).
 StyleClassifier = Callable[[np.ndarray, int], np.ndarray]

@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import numpy as np
 
-
 # Pre-factor that converts squared-cepstral-distance to the canonical MCD unit (dB).
 _MCD_K = (10.0 / np.log(10.0)) * np.sqrt(2.0)
 

@@ -8,7 +8,6 @@ from __future__ import annotations
 from typing import Literal
 
 import torch
-import numpy as np
 from torch import Tensor
 
 
@@ -67,8 +66,8 @@ class F0Extractor:
     # ------------------------------------------------------------------
 
     def _extract_crepe(self, wav: Tensor) -> tuple[Tensor, Tensor]:
-        import torchcrepe
         import torch.nn.functional as F
+        import torchcrepe
 
         audio = wav.unsqueeze(0).to(self.device)  # (1, T)
         f0, confidence = torchcrepe.predict(

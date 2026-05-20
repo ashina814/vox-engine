@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-import torch
 import pytest
+import torch
 
 from vox.data.dataset import VoxDataset, collate_fn
 

@@ -1,6 +1,3 @@
-import torch
-import numpy as np
-import pytest
 from vox.data.features.mel import MelExtractor
 
 

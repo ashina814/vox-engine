@@ -1,14 +1,13 @@
 """Smoke test: app builds and the wired callback runs end-to-end."""
 import numpy as np
+import pytest
 import soundfile as sf
 import torch
-import pytest
 
 from vox.inference.pipeline import InferencePipeline
 from vox.models.conditioning.aggregator import AggregatorConfig
 from vox.models.diffusion.decoder import DecoderConfig
 from vox.models.vox_model import VoxModel, VoxModelConfig
-
 
 pytest.importorskip("gradio", reason="gradio not installed in this environment")
 

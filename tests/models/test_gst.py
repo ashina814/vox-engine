@@ -1,5 +1,5 @@
-import torch
 import pytest
+import torch
 
 from vox.models.conditioning.gst import GlobalStyleTokens, ReferenceEncoder
 

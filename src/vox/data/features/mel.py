@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import torch
-import torchaudio
 import torchaudio.transforms as T
 from torch import Tensor
 

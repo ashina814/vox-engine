@@ -167,7 +167,12 @@ def run_preprocessing(
                 )
             )
             if not result.passed:
-                _quarantine(cfg.quarantine_dir, chunk_id, result.reason or "unknown", result.metrics)
+                _quarantine(
+                    cfg.quarantine_dir,
+                    chunk_id,
+                    result.reason or "unknown",
+                    result.metrics,
+                )
                 quarantined += 1
                 continue
 

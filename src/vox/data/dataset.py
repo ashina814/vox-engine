@@ -15,7 +15,6 @@ import torch
 from torch import Tensor
 from torch.utils.data import Dataset
 
-
 FEATURE_PATH_COLS = ("mel_path", "f0_path", "uv_path", "content_path", "loudness_path")
 
 

@@ -1,7 +1,7 @@
 """End-to-end smoke test for the inference pipeline with mocked extractors."""
 import numpy as np
-import torch
 import pytest
+import torch
 
 from vox.inference.pipeline import InferencePipeline, InferenceRequest
 from vox.models.conditioning.aggregator import AggregatorConfig

@@ -13,8 +13,6 @@ from pathlib import Path
 from typing import Callable, Iterable
 
 import numpy as np
-import torch
-from torch import Tensor
 
 from vox.evaluation.f0_rmse import f0_rmse
 from vox.evaluation.mcd import mel_cepstral_distortion
@@ -44,9 +42,15 @@ class BenchmarkResult:
         ))
 
 
-# Audio-render callable: turn an eval item into (ref_wav, pred_wav, f0_ref, f0_pred, uv_ref, uv_pred, style_id).
-# We inject this so the runner stays decoupled from the heavy model.
-RenderFn = Callable[[dict], tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, int]]
+_RenderTuple = tuple[
+    np.ndarray, np.ndarray,  # ref_wav, pred_wav
+    np.ndarray, np.ndarray,  # f0_ref, f0_pred
+    np.ndarray, np.ndarray,  # uv_ref, uv_pred
+    int,                     # style_id
+]
+# Audio-render callable. We inject this so the runner stays decoupled from
+# the heavy model and feature extractors.
+RenderFn = Callable[[dict], _RenderTuple]
 
 
 class BenchmarkRunner:

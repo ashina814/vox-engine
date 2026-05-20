@@ -4,7 +4,6 @@ import pytest
 from vox.evaluation.f0_rmse import f0_rmse
 from vox.evaluation.uv_error import uv_error_rate
 
-
 # --- F0 RMSE --------------------------------------------------------------
 
 

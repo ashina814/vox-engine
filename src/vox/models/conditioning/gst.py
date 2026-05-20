@@ -17,7 +17,12 @@ class ReferenceEncoder(nn.Module):
     Output: (B, out_dim)
     """
 
-    def __init__(self, n_mels: int = 128, out_dim: int = 256, conv_channels: tuple[int, ...] = (32, 32, 64, 64, 128, 128)) -> None:
+    def __init__(
+        self,
+        n_mels: int = 128,
+        out_dim: int = 256,
+        conv_channels: tuple[int, ...] = (32, 32, 64, 64, 128, 128),
+    ) -> None:
         super().__init__()
         layers: list[nn.Module] = []
         in_c = 1

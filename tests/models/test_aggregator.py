@@ -1,5 +1,4 @@
 import torch
-import pytest
 
 from vox.models.conditioning.aggregator import AggregatorConfig, ConditionAggregator
 

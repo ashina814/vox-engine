@@ -1,5 +1,5 @@
-import torch
 import pytest
+import torch
 
 from vox.inference.style_blend import slerp, slerp_barycentric
 

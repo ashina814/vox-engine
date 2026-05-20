@@ -8,7 +8,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 import numpy as np
-import torch
 from torch import Tensor
 
 
@@ -38,7 +37,9 @@ def _as_np(x: Tensor | np.ndarray) -> np.ndarray:
     return np.asarray(x)
 
 
-def check_f0_continuity(f0: Tensor | np.ndarray, max_jump_ratio: float = 0.05) -> tuple[bool, float]:
+def check_f0_continuity(
+    f0: Tensor | np.ndarray, max_jump_ratio: float = 0.05
+) -> tuple[bool, float]:
     """Voiced-frame F0 must not jump by >= 1 semitone too often.
 
     Ratio = (#frames with |Δlog2(f0)| >= 1/12) / (#voiced transitions).
@@ -86,7 +87,9 @@ def check_silence_ratio(uv: Tensor | np.ndarray, max_ratio: float = 0.5) -> tupl
     return ratio < max_ratio, ratio
 
 
-def check_duration(duration_s: float, min_s: float = 2.0, max_s: float = 12.0) -> tuple[bool, float]:
+def check_duration(
+    duration_s: float, min_s: float = 2.0, max_s: float = 12.0
+) -> tuple[bool, float]:
     return (min_s <= duration_s <= max_s), float(duration_s)
 
 

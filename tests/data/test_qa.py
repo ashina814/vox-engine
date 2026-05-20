@@ -1,11 +1,9 @@
 import numpy as np
 import torch
-import pytest
 
 from vox.data.qa import (
     ChunkFeatures,
     ChunkQA,
-    QAConfig,
     check_clip_ratio,
     check_duration,
     check_energy_dynamic_range,

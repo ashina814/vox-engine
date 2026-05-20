@@ -1,6 +1,7 @@
 """F0 extractor tests – CPU only, no model download needed for basic shape test."""
-import torch
 import pytest
+import torch
+
 from vox.data.features.f0 import F0Extractor
 from vox.data.features.mel import MelExtractor
 

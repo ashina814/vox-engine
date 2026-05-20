@@ -11,9 +11,7 @@ on the residual where it actually matters.
 """
 from __future__ import annotations
 
-import torch
 from torch import Tensor, nn
-
 
 WHISPER_ID = 1  # configs/* treat 1 as whisper
 

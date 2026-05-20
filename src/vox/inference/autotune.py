@@ -13,7 +13,6 @@ from typing import Literal
 
 import numpy as np
 
-
 # Major / minor scale semitones relative to the tonic.
 _MAJOR = [0, 2, 4, 5, 7, 9, 11]
 _MINOR = [0, 2, 3, 5, 7, 8, 10]
@@ -112,11 +111,7 @@ def _snap_cents_to_scale(cents: np.ndarray, scale_semitones: list[int]) -> np.nd
     semi = cents / 100.0
     # For each frame, snap to the closest in-scale semitone.
     base_octave = np.floor(semi / 12.0)
-    # Candidates: scale notes in this and adjacent octaves.
-    offsets = (np.stack([base_octave - 1, base_octave, base_octave + 1], axis=0) * 12.0)
-    candidates = offsets[..., None] + semis_in_octave[None, None, :]  # (3, T, S)
-    candidates = candidates.reshape(-1, candidates.shape[1] * candidates.shape[2])  # (3, T*S) — wrong
-    # Redo with clean reshape:
+    # Candidates: scale notes in this and the two adjacent octaves.
     cand = np.concatenate(
         [
             (np.expand_dims(base_octave, -1) + k) * 12.0 + semis_in_octave
@@ -150,9 +145,10 @@ def snap_to_scale(
     if not voiced.any():
         return f0.astype(np.float32)
 
-    melody, vibrato = (
-        preserve_vibrato(f0, sr_hop=sr_hop, sr=sr) if preserve_vib else (hz_to_cents(f0), np.zeros_like(f0))
-    )
+    if preserve_vib:
+        melody, vibrato = preserve_vibrato(f0, sr_hop=sr_hop, sr=sr)
+    else:
+        melody, vibrato = hz_to_cents(f0), np.zeros_like(f0)
 
     snapped = _snap_cents_to_scale(melody, scale_semitones)
     blended = (1.0 - strength) * melody + strength * snapped

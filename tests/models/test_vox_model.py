@@ -3,8 +3,8 @@
 Tiny configs so this runs on CPU in seconds. The point is to verify the
 end-to-end wiring (shapes, gradients, inference), not to train anything.
 """
-import torch
 import pytest
+import torch
 
 from vox.models.conditioning.aggregator import AggregatorConfig
 from vox.models.diffusion.decoder import DecoderConfig

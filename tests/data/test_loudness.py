@@ -1,6 +1,6 @@
-import torch
 import numpy as np
-import pytest
+import torch
+
 from vox.data.features.loudness import a_weighted_rms
 from vox.data.features.mel import MelExtractor
 
