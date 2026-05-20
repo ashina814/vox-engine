@@ -4,6 +4,7 @@ Each chunk in the eval set is passed through the model's inference path; the
 resulting wav is compared against the ground-truth audio to compute MCD, F0
 RMSE, and UV error. Style separability is optional (requires a classifier).
 """
+
 from __future__ import annotations
 
 import json
@@ -36,17 +37,22 @@ class BenchmarkResult:
     per_sample: list[dict]
 
     def to_json(self, path: str | Path) -> None:
-        Path(path).write_text(json.dumps(
-            {"metrics": self.metrics, "per_sample": self.per_sample},
-            indent=2,
-        ))
+        Path(path).write_text(
+            json.dumps(
+                {"metrics": self.metrics, "per_sample": self.per_sample},
+                indent=2,
+            )
+        )
 
 
 _RenderTuple = tuple[
-    np.ndarray, np.ndarray,  # ref_wav, pred_wav
-    np.ndarray, np.ndarray,  # f0_ref, f0_pred
-    np.ndarray, np.ndarray,  # uv_ref, uv_pred
-    int,                     # style_id
+    np.ndarray,
+    np.ndarray,  # ref_wav, pred_wav
+    np.ndarray,
+    np.ndarray,  # f0_ref, f0_pred
+    np.ndarray,
+    np.ndarray,  # uv_ref, uv_pred
+    int,  # style_id
 ]
 # Audio-render callable. We inject this so the runner stays decoupled from
 # the heavy model and feature extractors.
@@ -71,13 +77,15 @@ class BenchmarkRunner:
             )
             f0r = f0_rmse(f0_ref, f0_pred, uv=uv_ref & uv_pred, log=True)
             uv_err = uv_error_rate(uv_ref, uv_pred)
-            per_sample.append({
-                "chunk_id": item.get("chunk_id", f"sample_{i:04d}"),
-                "mcd_db": mcd_db,
-                "log_f0_rmse": f0r,
-                "uv_error": uv_err,
-                "style_id": int(style_id),
-            })
+            per_sample.append(
+                {
+                    "chunk_id": item.get("chunk_id", f"sample_{i:04d}"),
+                    "mcd_db": mcd_db,
+                    "log_f0_rmse": f0r,
+                    "uv_error": uv_err,
+                    "style_id": int(style_id),
+                }
+            )
             samples_by_style.setdefault(int(style_id), []).append(pred_wav)
 
         elapsed = time.perf_counter() - start

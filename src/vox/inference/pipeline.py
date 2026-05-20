@@ -1,4 +1,5 @@
 """End-to-end inference: WAV → features → conditioning → diffusion → vocoder."""
+
 from __future__ import annotations
 
 import time
@@ -121,9 +122,7 @@ class InferencePipeline:
 
         ref_mel = None
         if req.ref_mel is not None:
-            ref_mel = torch.from_numpy(req.ref_mel.astype(np.float32)).unsqueeze(0).to(
-                self.device
-            )
+            ref_mel = torch.from_numpy(req.ref_mel.astype(np.float32)).unsqueeze(0).to(self.device)
 
         out = self.model.infer(
             content=content.unsqueeze(0),

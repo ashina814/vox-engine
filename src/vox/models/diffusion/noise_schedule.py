@@ -3,6 +3,7 @@
 Following Karras et al. parameterisation; v-prediction (Salimans & Ho, 2022)
 is more numerically stable than epsilon-prediction near both t=0 and t=T.
 """
+
 from __future__ import annotations
 
 import math

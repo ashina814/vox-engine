@@ -1,4 +1,5 @@
 """Standalone synthetic audio generators (usable outside pytest)."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -31,9 +32,7 @@ def chirp_wav(
     return torch.from_numpy(wav)
 
 
-def make_fake_batch(
-    B: int = 2, T_mel: int = 200, n_mels: int = 128
-) -> dict[str, torch.Tensor]:
+def make_fake_batch(B: int = 2, T_mel: int = 200, n_mels: int = 128) -> dict[str, torch.Tensor]:
     """Random batch dict passable directly to training_step."""
     return {
         "mel": torch.rand(B, n_mels, T_mel),

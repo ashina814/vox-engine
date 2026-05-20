@@ -9,6 +9,7 @@ dedicated residual path is added on top of the base conditioning, gated by:
 This avoids polluting non-whisper styles while still letting the decoder lean
 on the residual where it actually matters.
 """
+
 from __future__ import annotations
 
 from torch import Tensor, nn

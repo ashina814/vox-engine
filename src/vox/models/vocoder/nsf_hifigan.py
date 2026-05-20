@@ -11,6 +11,7 @@ Real I/O contract (NSF-HiFiGAN):
     f0:  (B, T_mel)         — Hz, 0 on unvoiced frames
     →    (B, T_wav)         — float32 waveform at sr=44100, T_wav = T_mel * hop
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -94,7 +95,5 @@ class NSFHifiGANWrapper(nn.Module):
         if mel.shape[1] != self.n_mels:
             raise ValueError(f"Expected n_mels={self.n_mels}, got {mel.shape[1]}")
         if f0.shape[-1] != mel.shape[-1]:
-            raise ValueError(
-                f"f0 T ({f0.shape[-1]}) must equal mel T ({mel.shape[-1]})"
-            )
+            raise ValueError(f"f0 T ({f0.shape[-1]}) must equal mel T ({mel.shape[-1]})")
         return self.model(mel, f0)

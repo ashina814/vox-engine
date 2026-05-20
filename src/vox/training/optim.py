@@ -4,6 +4,7 @@ Per the design spec: AdamW (β=(0.9, 0.98), wd=0.01) + cosine schedule with
 linear warmup. ``build_optimizer`` and ``build_scheduler`` are thin enough to
 be driven straight from a hydra config block.
 """
+
 from __future__ import annotations
 
 import math
@@ -25,14 +26,10 @@ class OptimConfig:
 
 def build_optimizer(params, cfg: OptimConfig) -> AdamW:
     """AdamW with the design-spec hyper-parameters."""
-    return AdamW(
-        params, lr=cfg.lr, betas=cfg.betas, weight_decay=cfg.weight_decay
-    )
+    return AdamW(params, lr=cfg.lr, betas=cfg.betas, weight_decay=cfg.weight_decay)
 
 
-def cosine_with_warmup_lambda(
-    warmup_steps: int, max_steps: int, min_lr_ratio: float = 0.0
-):
+def cosine_with_warmup_lambda(warmup_steps: int, max_steps: int, min_lr_ratio: float = 0.0):
     """Return a LambdaLR multiplier that goes linear→1→cosine→min_lr_ratio."""
 
     def lr_lambda(step: int) -> float:
@@ -50,7 +47,5 @@ def cosine_with_warmup_lambda(
 def build_scheduler(optimizer: Optimizer, cfg: OptimConfig) -> LambdaLR:
     return LambdaLR(
         optimizer,
-        lr_lambda=cosine_with_warmup_lambda(
-            cfg.warmup_steps, cfg.max_steps, cfg.min_lr_ratio
-        ),
+        lr_lambda=cosine_with_warmup_lambda(cfg.warmup_steps, cfg.max_steps, cfg.min_lr_ratio),
     )

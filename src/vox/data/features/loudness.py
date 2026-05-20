@@ -1,4 +1,5 @@
 """A-weighted loudness (RMS per mel frame)."""
+
 from __future__ import annotations
 
 from functools import lru_cache
@@ -29,9 +30,7 @@ def _a_weighting_coeffs(sr: int) -> tuple[np.ndarray, np.ndarray]:
     return b.astype(np.float64), a.astype(np.float64)
 
 
-def a_weighted_rms(
-    wav: Tensor, hop: int = 512, win: int = 2048, sr: int = 44_100
-) -> Tensor:
+def a_weighted_rms(wav: Tensor, hop: int = 512, win: int = 2048, sr: int = 44_100) -> Tensor:
     """A-weighted RMS energy per mel frame, centered to match MelExtractor.
 
     Args:

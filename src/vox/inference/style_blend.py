@@ -8,6 +8,7 @@ Pure spherical interpolation gives more musical transitions than linear mixing
 because the FiLM modulator effectively scales by direction; linear mixing
 collapses the magnitude near the equidistant point.
 """
+
 from __future__ import annotations
 
 from typing import Sequence
@@ -49,9 +50,7 @@ def slerp(v0: Tensor, v1: Tensor, alpha: float, eps: float = 1e-6) -> Tensor:
     return torch.where(near_collinear.expand_as(lin_mix), lin_mix, slerp_out)
 
 
-def slerp_barycentric(
-    style_vectors: Sequence[Tensor], weights: Sequence[float]
-) -> Tensor:
+def slerp_barycentric(style_vectors: Sequence[Tensor], weights: Sequence[float]) -> Tensor:
     """Weighted SLERP over an arbitrary number of vectors (3+ via folding).
 
     Strategy: sort by weight, take the heaviest pair, SLERP them with their

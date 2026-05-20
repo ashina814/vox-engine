@@ -1,4 +1,5 @@
 """End-to-end smoke test for the preprocessing loop with mocked extractors."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -78,9 +79,7 @@ def test_preprocessing_quarantines_silent_chunks(tmp_path):
         quarantine_dir=tmp_path / "quarantine",
         index_path=tmp_path / "index.parquet",
     )
-    df = run_preprocessing(
-        cfg, style_to_id={"normal": 0}, f0_fn=_fake_f0, content_fn=None
-    )
+    df = run_preprocessing(cfg, style_to_id={"normal": 0}, f0_fn=_fake_f0, content_fn=None)
     assert len(df) == 0
 
 
@@ -97,8 +96,6 @@ def test_preprocessing_skips_content_when_no_fn(tmp_path):
         val_ratio=0.0,
         extract_content=False,
     )
-    df = run_preprocessing(
-        cfg, style_to_id={"normal": 0}, f0_fn=_fake_f0, content_fn=None
-    )
+    df = run_preprocessing(cfg, style_to_id={"normal": 0}, f0_fn=_fake_f0, content_fn=None)
     assert len(df) == 1
     assert df.iloc[0]["content_path"] == ""

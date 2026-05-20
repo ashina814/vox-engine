@@ -14,7 +14,11 @@ def _make_chunk(tmp_path, chunk_id: str, T: int, style_id: int = 0, split: str =
     loudness = np.random.rand(T).astype(np.float32)
     paths = {}
     for name, arr in [
-        ("mel", mel), ("f0", f0), ("uv", uv), ("content", content), ("loudness", loudness)
+        ("mel", mel),
+        ("f0", f0),
+        ("uv", uv),
+        ("content", content),
+        ("loudness", loudness),
     ]:
         p = tmp_path / f"{chunk_id}_{name}.npy"
         np.save(p, arr)
@@ -78,11 +82,19 @@ def test_collate_padded_regions_are_zero(index_path):
 
 
 def test_dataset_missing_split_column_raises(tmp_path):
-    df = pd.DataFrame([{
-        "chunk_id": "x", "style_id": 0,
-        "mel_path": "x", "f0_path": "x", "uv_path": "x",
-        "content_path": "x", "loudness_path": "x",
-    }])
+    df = pd.DataFrame(
+        [
+            {
+                "chunk_id": "x",
+                "style_id": 0,
+                "mel_path": "x",
+                "f0_path": "x",
+                "uv_path": "x",
+                "content_path": "x",
+                "loudness_path": "x",
+            }
+        ]
+    )
     p = tmp_path / "index.parquet"
     df.to_parquet(p)
     with pytest.raises(KeyError):

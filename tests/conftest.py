@@ -24,9 +24,7 @@ def sine_wav(sr):
 def harmonic_wav(sr):
     """5-second harmonic tone (f0=220, 5 harmonics)."""
     t = np.linspace(0, 5.0, int(5.0 * sr), endpoint=False, dtype=np.float32)
-    wav = sum(
-        np.sin(2 * np.pi * 220 * k * t) / k for k in range(1, 6)
-    ).astype(np.float32)
+    wav = sum(np.sin(2 * np.pi * 220 * k * t) / k for k in range(1, 6)).astype(np.float32)
     wav /= np.abs(wav).max() + 1e-9
     return torch.from_numpy(wav)
 

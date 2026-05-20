@@ -15,6 +15,7 @@ Tensor contract on every batch:
     ref_mel:    (B, n_mels, T_ref) | None  (optional, drives GST)
     speaker_id: (B,) long | None
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

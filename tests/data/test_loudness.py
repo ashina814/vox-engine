@@ -9,9 +9,9 @@ def test_output_shape(sine_wav):
     loudness = a_weighted_rms(sine_wav)
     mel_frames = MelExtractor().frames(len(sine_wav))
     # Loudness frame count matches mel frame count
-    assert loudness.shape == (mel_frames,), (
-        f"loudness shape {loudness.shape}, expected ({mel_frames},)"
-    )
+    assert loudness.shape == (
+        mel_frames,
+    ), f"loudness shape {loudness.shape}, expected ({mel_frames},)"
 
 
 def test_non_negative(sine_wav):

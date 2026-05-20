@@ -6,6 +6,7 @@ identical to the canonical MCD literature, but the *relative* values track
 quality the same way and the metric still satisfies the design contract
 (identical waveforms → ~0, dissimilar → larger value).
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -53,5 +54,5 @@ def mel_cepstral_distortion(
         return 0.0
 
     diffs = ref[:, pairs[:, 0]] - pred[:, pairs[:, 1]]  # (n_mcep, L)
-    per_frame = np.sqrt((diffs ** 2).sum(axis=0))
+    per_frame = np.sqrt((diffs**2).sum(axis=0))
     return float(_MCD_K * per_frame.mean())

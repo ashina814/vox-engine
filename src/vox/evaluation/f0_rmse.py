@@ -1,4 +1,5 @@
 """F0 RMSE in log space, restricted to mutually-voiced frames."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -38,4 +39,4 @@ def f0_rmse(
         diff = np.log(ref[mask]) - np.log(pred[mask])
     else:
         diff = ref[mask] - pred[mask]
-    return float(np.sqrt(np.mean(diff ** 2)))
+    return float(np.sqrt(np.mean(diff**2)))

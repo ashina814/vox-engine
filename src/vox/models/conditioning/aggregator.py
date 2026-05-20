@@ -14,6 +14,7 @@ The frame-wise streams are projected to ``hidden`` and concatenated additively;
 the utterance-level style vector (style embedding + optional GST) is broadcast
 across time and used as the FiLM modulator.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

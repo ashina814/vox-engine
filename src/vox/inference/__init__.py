@@ -1,4 +1,5 @@
 """Public API for inference."""
+
 from vox.inference.autotune import get_scale, preserve_vibrato, snap_to_scale
 from vox.inference.pipeline import InferencePipeline, InferenceRequest, InferenceResult
 from vox.inference.style_blend import slerp, slerp_barycentric

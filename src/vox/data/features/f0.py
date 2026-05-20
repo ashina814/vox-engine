@@ -3,6 +3,7 @@
 Backend abstraction: torchcrepe is used for W1 validation.
 RMVPE can be swapped in by passing backend='rmvpe' once integrated.
 """
+
 from __future__ import annotations
 
 from typing import Literal

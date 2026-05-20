@@ -3,6 +3,7 @@
 Each check returns ``(passed, metric)``. ChunkQA aggregates them per the
 thresholds in ``QAConfig`` and produces a ``QAResult``.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

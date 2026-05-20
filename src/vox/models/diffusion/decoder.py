@@ -9,6 +9,7 @@ Tensor conventions:
     cond:   (B, hidden, T) — output of ConditionAggregator (+ Whisper branch)
     return: (B, n_mels, T) — v prediction
 """
+
 from __future__ import annotations
 
 import math
@@ -24,9 +25,7 @@ def sinusoidal_embedding(t: Tensor, dim: int, max_period: int = 10_000) -> Tenso
     half = dim // 2
     device = t.device
     freqs = torch.exp(
-        -math.log(max_period)
-        * torch.arange(half, device=device, dtype=torch.float32)
-        / half
+        -math.log(max_period) * torch.arange(half, device=device, dtype=torch.float32) / half
     )
     args = t.float().unsqueeze(1) * freqs.unsqueeze(0)
     emb = torch.cat([torch.cos(args), torch.sin(args)], dim=-1)

@@ -1,4 +1,5 @@
 """Silence-aware chunking of long audio into 5-10s segments."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

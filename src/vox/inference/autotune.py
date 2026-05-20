@@ -7,6 +7,7 @@ Pipeline:
     → smooth via moving average  → stable cents
     → add vibrato back           → tuned cents → Hz
 """
+
 from __future__ import annotations
 
 from typing import Literal
@@ -17,9 +18,25 @@ import numpy as np
 _MAJOR = [0, 2, 4, 5, 7, 9, 11]
 _MINOR = [0, 2, 3, 5, 7, 8, 10]
 # Semitone offset of each note from C.
-_NOTE_OFFSETS = {"C": 0, "C#": 1, "Db": 1, "D": 2, "D#": 3, "Eb": 3, "E": 4,
-                 "F": 5, "F#": 6, "Gb": 6, "G": 7, "G#": 8, "Ab": 8,
-                 "A": 9, "A#": 10, "Bb": 10, "B": 11}
+_NOTE_OFFSETS = {
+    "C": 0,
+    "C#": 1,
+    "Db": 1,
+    "D": 2,
+    "D#": 3,
+    "Eb": 3,
+    "E": 4,
+    "F": 5,
+    "F#": 6,
+    "Gb": 6,
+    "G": 7,
+    "G#": 8,
+    "Ab": 8,
+    "A": 9,
+    "A#": 10,
+    "Bb": 10,
+    "B": 11,
+}
 
 # Reference: A440 sits at MIDI 69, i.e. 5700 cents above C0 in our convention.
 _A440_CENTS = 5700.0
@@ -113,10 +130,7 @@ def _snap_cents_to_scale(cents: np.ndarray, scale_semitones: list[int]) -> np.nd
     base_octave = np.floor(semi / 12.0)
     # Candidates: scale notes in this and the two adjacent octaves.
     cand = np.concatenate(
-        [
-            (np.expand_dims(base_octave, -1) + k) * 12.0 + semis_in_octave
-            for k in (-1, 0, 1)
-        ],
+        [(np.expand_dims(base_octave, -1) + k) * 12.0 + semis_in_octave for k in (-1, 0, 1)],
         axis=-1,
     )  # (T, 3*S)
     diff = np.abs(cand - semi[:, None])

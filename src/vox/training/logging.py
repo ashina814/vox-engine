@@ -3,6 +3,7 @@
 The Trainer only uses ``Logger`` — concrete backends (stdout, TensorBoard,
 wandb) are lazy-imported so test environments without optional deps still work.
 """
+
 from __future__ import annotations
 
 from pathlib import Path

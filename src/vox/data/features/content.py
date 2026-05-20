@@ -1,4 +1,5 @@
 """ContentVec-768 feature extractor (frozen, not trained)."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -93,4 +94,6 @@ class ContentVecExtractor:
             size=t_mel,
             mode="linear",
             align_corners=False,
-        ).squeeze(0)  # (768, t_mel)
+        ).squeeze(
+            0
+        )  # (768, t_mel)

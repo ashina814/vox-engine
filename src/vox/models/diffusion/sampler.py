@@ -2,6 +2,7 @@
 
 K=50 inference steps as called out in the design spec.
 """
+
 from __future__ import annotations
 
 import torch

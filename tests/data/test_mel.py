@@ -26,6 +26,7 @@ def test_440hz_peak(sine_wav, sr):
 
     # mel filterbank center frequencies at 44100 Hz, 128 mels
     import torchaudio.functional as F_audio
+
     freqs = F_audio.melscale_fbanks(
         n_freqs=MelExtractor.N_FFT // 2 + 1,
         f_min=0.0,

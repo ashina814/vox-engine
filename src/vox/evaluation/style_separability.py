@@ -9,6 +9,7 @@ For Phase A the real classifier (a SER model) is not yet trained. We expose a
 clean callable interface so any classifier — even a placeholder — can be
 plugged in via dependency injection. Phase B drops in a trained model.
 """
+
 from __future__ import annotations
 
 from typing import Callable, Sequence
@@ -29,9 +30,7 @@ class StyleSeparabilityEvaluator:
         sr: sample rate to pass to the classifier.
     """
 
-    def __init__(
-        self, classifier: StyleClassifier, n_classes: int, sr: int = 44_100
-    ) -> None:
+    def __init__(self, classifier: StyleClassifier, n_classes: int, sr: int = 44_100) -> None:
         self.classifier = classifier
         self.n_classes = n_classes
         self.sr = sr
@@ -42,9 +41,7 @@ class StyleSeparabilityEvaluator:
         correct = 0
         for true_id, audios in samples_by_style.items():
             if true_id < 0 or true_id >= self.n_classes:
-                raise ValueError(
-                    f"style id {true_id} out of range [0, {self.n_classes})"
-                )
+                raise ValueError(f"style id {true_id} out of range [0, {self.n_classes})")
             for wav in audios:
                 logits = np.asarray(self.classifier(np.asarray(wav, dtype=np.float32), self.sr))
                 if logits.shape != (self.n_classes,):

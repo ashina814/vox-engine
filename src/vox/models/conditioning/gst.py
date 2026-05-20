@@ -4,6 +4,7 @@ Reference encoder maps (B, n_mels, T_ref) → (B, hidden) via a stack of
 Conv2D + GRU, then multi-head attention is taken over a bank of learnable
 style tokens to produce a single style vector per utterance.
 """
+
 from __future__ import annotations
 
 import torch
@@ -38,9 +39,7 @@ class ReferenceEncoder(nn.Module):
         mel_after = n_mels
         for _ in conv_channels:
             mel_after = (mel_after + 1) // 2
-        self.gru = nn.GRU(
-            input_size=in_c * mel_after, hidden_size=out_dim, batch_first=True
-        )
+        self.gru = nn.GRU(input_size=in_c * mel_after, hidden_size=out_dim, batch_first=True)
 
     def forward(self, mel: Tensor) -> Tensor:
         # (B, n_mels, T_ref) → (B, 1, n_mels, T_ref)
@@ -75,9 +74,7 @@ class GlobalStyleTokens(nn.Module):
         super().__init__()
         self.ref_encoder = ReferenceEncoder(n_mels=n_mels, out_dim=hidden)
         self.tokens = nn.Parameter(torch.randn(num_tokens, hidden) * 0.5)
-        self.attn = nn.MultiheadAttention(
-            embed_dim=hidden, num_heads=num_heads, batch_first=True
-        )
+        self.attn = nn.MultiheadAttention(embed_dim=hidden, num_heads=num_heads, batch_first=True)
         self.hidden = hidden
 
     def forward(self, ref_mel: Tensor) -> Tensor:

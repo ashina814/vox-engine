@@ -1,4 +1,5 @@
 """Smoke test: app builds and the wired callback runs end-to-end."""
+
 import numpy as np
 import pytest
 import soundfile as sf
@@ -53,7 +54,8 @@ def test_app_callback_runs(tmp_path):
 
     # Pull the click handler off the first registered button.
     fn = next(
-        d.fn for d in app.fns.values()
+        d.fn
+        for d in app.fns.values()
         if d.fn is not None and getattr(d.fn, "__name__", "") == "run"
     )
     out_audio, info = fn(str(path), "None", 0.0, 3, 1.0, 0.0, 0.0)
@@ -69,7 +71,8 @@ def test_app_callback_no_input_returns_none():
 
     app = build_app(_tiny_pipeline(), n_styles=3)
     fn = next(
-        d.fn for d in app.fns.values()
+        d.fn
+        for d in app.fns.values()
         if d.fn is not None and getattr(d.fn, "__name__", "") == "run"
     )
     out_audio, info = fn(None, "C", 0.8, 3, 1.0, 0.0, 0.0)

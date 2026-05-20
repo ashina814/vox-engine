@@ -5,6 +5,7 @@ collated batches don't pollute gradients. The masked mean denominator is
 ``mask.sum() * feature_dim`` so loss magnitudes stay comparable to the unmasked
 ``.mean()`` reduction.
 """
+
 from __future__ import annotations
 
 import torch
@@ -20,16 +21,12 @@ def _masked_mean(diff_sq: Tensor, mask: Tensor | None) -> Tensor:
     return (diff_sq * mask_f).sum() / denom
 
 
-def diffusion_loss(
-    v_pred: Tensor, v_target: Tensor, mask: Tensor | None = None
-) -> Tensor:
+def diffusion_loss(v_pred: Tensor, v_target: Tensor, mask: Tensor | None = None) -> Tensor:
     """Masked L2 between predicted and target v."""
     return _masked_mean((v_pred - v_target).pow(2), mask)
 
 
-def mel_l1_loss(
-    mel_pred: Tensor, mel_target: Tensor, mask: Tensor | None = None
-) -> Tensor:
+def mel_l1_loss(mel_pred: Tensor, mel_target: Tensor, mask: Tensor | None = None) -> Tensor:
     """Auxiliary L1 between reconstructed mel and ground-truth mel."""
     diff = (mel_pred - mel_target).abs()
     if mask is None:

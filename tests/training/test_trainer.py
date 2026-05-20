@@ -1,4 +1,5 @@
 """Smoke test: tiny VoxModel + synthetic batches → loss decreases over a handful of steps."""
+
 import pytest
 import torch
 from torch.utils.data import DataLoader, Dataset
@@ -61,8 +62,13 @@ def test_trainer_single_step():
     model = VoxModel(_tiny_cfg())
     loader = DataLoader(_FakeBatchDataset(length=4, B=1), batch_size=2, collate_fn=_collate)
     trainer = VoxTrainer(
-        TrainConfig(max_steps=1, log_interval=1, val_interval=1000, ckpt_interval=1000,
-                    optim=OptimConfig(lr=1e-3, warmup_steps=0, max_steps=10)),
+        TrainConfig(
+            max_steps=1,
+            log_interval=1,
+            val_interval=1000,
+            ckpt_interval=1000,
+            optim=OptimConfig(lr=1e-3, warmup_steps=0, max_steps=10),
+        ),
         model=model,
         train_loader=loader,
     )
@@ -97,9 +103,14 @@ def test_trainer_checkpoint_roundtrip(tmp_path):
     model = VoxModel(_tiny_cfg())
     loader = DataLoader(_FakeBatchDataset(length=4, B=1), batch_size=1, collate_fn=_collate)
     trainer = VoxTrainer(
-        TrainConfig(max_steps=2, log_interval=10, val_interval=10, ckpt_interval=10,
-                    ckpt_dir=tmp_path,
-                    optim=OptimConfig(lr=1e-3, warmup_steps=0, max_steps=10)),
+        TrainConfig(
+            max_steps=2,
+            log_interval=10,
+            val_interval=10,
+            ckpt_interval=10,
+            ckpt_dir=tmp_path,
+            optim=OptimConfig(lr=1e-3, warmup_steps=0, max_steps=10),
+        ),
         model=model,
         train_loader=loader,
     )
@@ -108,9 +119,14 @@ def test_trainer_checkpoint_roundtrip(tmp_path):
 
     model2 = VoxModel(_tiny_cfg())
     trainer2 = VoxTrainer(
-        TrainConfig(max_steps=2, log_interval=10, val_interval=10, ckpt_interval=10,
-                    ckpt_dir=tmp_path,
-                    optim=OptimConfig(lr=1e-3, warmup_steps=0, max_steps=10)),
+        TrainConfig(
+            max_steps=2,
+            log_interval=10,
+            val_interval=10,
+            ckpt_interval=10,
+            ckpt_dir=tmp_path,
+            optim=OptimConfig(lr=1e-3, warmup_steps=0, max_steps=10),
+        ),
         model=model2,
         train_loader=loader,
     )
@@ -128,8 +144,13 @@ def test_trainer_loss_decreases():
     model = VoxModel(_tiny_cfg())
     loader = DataLoader(_FakeBatchDataset(length=4, B=1), batch_size=2, collate_fn=_collate)
     trainer = VoxTrainer(
-        TrainConfig(max_steps=50, log_interval=200, val_interval=200, ckpt_interval=200,
-                    optim=OptimConfig(lr=3e-3, warmup_steps=0, max_steps=50)),
+        TrainConfig(
+            max_steps=50,
+            log_interval=200,
+            val_interval=200,
+            ckpt_interval=200,
+            optim=OptimConfig(lr=3e-3, warmup_steps=0, max_steps=50),
+        ),
         model=model,
         train_loader=loader,
         logger=StdoutLogger(),

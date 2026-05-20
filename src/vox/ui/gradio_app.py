@@ -4,6 +4,7 @@ The app is intentionally a thin shell: every parameter maps 1:1 to an
 ``InferenceRequest`` field, so any improvement that lands in the pipeline is
 immediately exposed here.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -21,7 +22,7 @@ def build_app(pipeline: InferencePipeline, n_styles: int = 3):
     """
     import gradio as gr
 
-    style_labels = ["Normal", "Whisper", "Power", "Style 4", "Style 5"][: n_styles]
+    style_labels = ["Normal", "Whisper", "Power", "Style 4", "Style 5"][:n_styles]
 
     def _normalize(weights: list[float]) -> tuple[float, ...]:
         weights = [max(0.0, float(w)) for w in weights]

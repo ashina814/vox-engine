@@ -1,4 +1,5 @@
 """Voiced/unvoiced frame-wise classification error rate."""
+
 from __future__ import annotations
 
 import numpy as np

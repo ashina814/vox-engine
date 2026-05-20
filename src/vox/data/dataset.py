@@ -4,6 +4,7 @@ The preprocessing CLI writes one row per chunk to ``index.parquet`` with paths
 to each feature .npy. ``VoxDataset`` lazily loads them; ``collate_fn`` pads
 variable-length feature tensors and produces a mel-frame mask.
 """
+
 from __future__ import annotations
 
 from pathlib import Path

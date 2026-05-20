@@ -3,6 +3,7 @@
 Tiny configs so this runs on CPU in seconds. The point is to verify the
 end-to-end wiring (shapes, gradients, inference), not to train anything.
 """
+
 import pytest
 import torch
 
@@ -44,9 +45,7 @@ def test_training_step_backward():
     out = model.training_step(_fake_batch())
     out["total_loss"].backward()
     # Decoder and aggregator should both accumulate gradient.
-    dec_g = any(
-        p.grad is not None and p.grad.abs().sum() > 0 for p in model.decoder.parameters()
-    )
+    dec_g = any(p.grad is not None and p.grad.abs().sum() > 0 for p in model.decoder.parameters())
     agg_g = any(
         p.grad is not None and p.grad.abs().sum() > 0 for p in model.aggregator.parameters()
     )

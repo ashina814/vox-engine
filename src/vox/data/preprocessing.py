@@ -17,6 +17,7 @@ Produces:
       {chunk_id}.json
     index.parquet                            # rows for QA-passed chunks
 """
+
 from __future__ import annotations
 
 import json
@@ -81,6 +82,7 @@ def _load_wav(path: Path, target_sr: int) -> Tensor:
     wav = torch.from_numpy(wav_np)
     if sr != target_sr:
         import torchaudio.functional as F_audio
+
         wav = F_audio.resample(wav, sr, target_sr)
     return wav.float()
 
@@ -161,11 +163,7 @@ def run_preprocessing(
                 content = content_fn(chunk.wav, cfg.sr)
                 feats_np["content"] = content.numpy()
 
-            result = qa(
-                ChunkFeatures(
-                    wav=chunk.wav, sr=cfg.sr, f0=f0, uv=uv, loudness=loudness
-                )
-            )
+            result = qa(ChunkFeatures(wav=chunk.wav, sr=cfg.sr, f0=f0, uv=uv, loudness=loudness))
             if not result.passed:
                 _quarantine(
                     cfg.quarantine_dir,
