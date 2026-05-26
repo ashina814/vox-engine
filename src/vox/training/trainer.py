@@ -146,7 +146,7 @@ class VoxTrainer:
             if self.global_step % self.cfg.log_interval == 0:
                 lr = self.optimizer.param_groups[0]["lr"]
                 self.logger.log(
-                    {**{k: float(v) for k, v in losses.items()}, "lr": lr},
+                    {**{k: float(v.detach()) for k, v in losses.items()}, "lr": lr},
                     self.global_step,
                 )
 

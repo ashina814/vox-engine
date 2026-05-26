@@ -8,12 +8,12 @@ Usage:
     uv run python scripts/benchmark.py data=opensinger benchmark.max_samples=20
     uv run python scripts/benchmark.py ckpt_path=ckpts/step_00010000.pt
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import hydra
-import numpy as np
 import soundfile as sf
 import torch
 from omegaconf import DictConfig
@@ -42,7 +42,7 @@ def _make_render_fn(pipeline: InferencePipeline, f0_ext, sr: int, hop: int):
         req = InferenceRequest(
             input_wav=ref,
             sr=sr,
-            target_key=None,                # evaluation = no auto-tune
+            target_key=None,  # evaluation = no auto-tune
             style_weights=(1.0, 0.0, 0.0),  # neutral
         )
         result = pipeline(req)
@@ -57,9 +57,12 @@ def _make_render_fn(pipeline: InferencePipeline, f0_ext, sr: int, hop: int):
         uv_pred = compute_uv(f0_pred_t, loud_pred).numpy().astype(bool)
 
         return (
-            ref, pred,
-            f0_ref_t.numpy(), f0_pred_t.numpy(),
-            uv_ref, uv_pred,
+            ref,
+            pred,
+            f0_ref_t.numpy(),
+            f0_pred_t.numpy(),
+            uv_ref,
+            uv_pred,
             int(item["style_id"]),
         )
 
@@ -81,23 +84,32 @@ def main(cfg: DictConfig) -> None:
     # Content extractor is heavy; skip if the user asks for a smoke run.
     skip_content = bool(cfg.get("benchmark", {}).get("skip_content", False))
     if skip_content:
+
         def content_fn(wav, sr):
             T = wav.shape[-1] // hop + 1
             return torch.randn(768, T)
+
     else:
         from vox.data.features.content import ContentVecExtractor
+
         cv = ContentVecExtractor()
         content_fn = lambda wav, sr: cv(wav, src_sr=sr)  # noqa: E731
 
     pipeline = InferencePipeline(model=model, f0_fn=f0, content_fn=content_fn, sr=sr, hop=hop)
-    runner = BenchmarkRunner(BenchmarkConfig(
-        sr=sr, hop=hop,
-        max_samples=cfg.get("benchmark", {}).get("max_samples", None),
-        n_styles=int(cfg.data.get("n_styles", 3)),
-    ))
+    runner = BenchmarkRunner(
+        BenchmarkConfig(
+            sr=sr,
+            hop=hop,
+            max_samples=cfg.get("benchmark", {}).get("max_samples", None),
+            n_styles=int(cfg.data.get("n_styles", 3)),
+        )
+    )
 
     dataset = VoxDataset(cfg.data.index_path, split="val")
-    items = [{**dataset[i], "source_wav": dataset.df.iloc[i].get("source_wav")} for i in range(len(dataset))]
+    items = [
+        {**dataset[i], "source_wav": dataset.df.iloc[i].get("source_wav")}
+        for i in range(len(dataset))
+    ]
     res = runner.run(items, _make_render_fn(pipeline, f0, sr, hop))
 
     out_json = Path(cfg.get("benchmark", {}).get("out_json", "benchmark.json"))

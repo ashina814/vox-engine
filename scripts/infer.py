@@ -11,12 +11,12 @@ Notes:
 - ``inference.skip_content``: bypass ContentVec download (uses random content
   features). Only meaningful for smoke tests.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import hydra
-import numpy as np
 import soundfile as sf
 import torch
 from omegaconf import DictConfig
@@ -28,11 +28,14 @@ from vox.models.vox_model import VoxModel, VoxModelConfig
 
 def _build_content_fn(skip: bool):
     if skip:
+
         def fake(wav, sr):
             T = wav.shape[-1] // 512 + 1
             return torch.randn(768, T)
+
         return fake
     from vox.data.features.content import ContentVecExtractor
+
     cv = ContentVecExtractor()
     return lambda wav, sr: cv(wav, src_sr=sr)
 
@@ -55,8 +58,11 @@ def main(cfg: DictConfig) -> None:
     content_fn = _build_content_fn(skip=bool(cfg.get("inference", {}).get("skip_content", False)))
 
     pipeline = InferencePipeline(
-        model=model, f0_fn=f0, content_fn=content_fn,
-        sr=cfg.audio.sr, hop=cfg.audio.hop,
+        model=model,
+        f0_fn=f0,
+        content_fn=content_fn,
+        sr=cfg.audio.sr,
+        hop=cfg.audio.hop,
     )
 
     style_weights = cfg.get("inference", {}).get("style_weights", [1.0, 0.0, 0.0])
@@ -70,8 +76,9 @@ def main(cfg: DictConfig) -> None:
     )
     res = pipeline(req)
     sf.write(out_wav, res.output_wav, res.sr)
-    print(f"Wrote {out_wav}  ({len(res.output_wav)/res.sr:.2f} s)  "
-          f"rtf={res.metadata['rtf']:.2f}")
+    print(
+        f"Wrote {out_wav}  ({len(res.output_wav)/res.sr:.2f} s)  " f"rtf={res.metadata['rtf']:.2f}"
+    )
 
 
 if __name__ == "__main__":

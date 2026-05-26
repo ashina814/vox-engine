@@ -4,6 +4,7 @@ Usage:
     uv run python scripts/preprocess.py data=opensinger
     uv run python scripts/preprocess.py data=synthetic preprocess.extract_content=false
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -39,7 +40,9 @@ def main(cfg: DictConfig) -> None:
     if "style_ids" in cfg.data and cfg.data.style_ids is not None:
         style_to_id = dict(cfg.data.style_ids)
     else:
-        style_to_id = {d.name: i for i, d in enumerate(sorted(pp_cfg.raw_dir.iterdir())) if d.is_dir()}
+        style_to_id = {
+            d.name: i for i, d in enumerate(sorted(pp_cfg.raw_dir.iterdir())) if d.is_dir()
+        }
 
     f0 = F0Extractor(backend="torchcrepe", hop=pp_cfg.hop, sr=pp_cfg.sr)
 
