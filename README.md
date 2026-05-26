@@ -1,5 +1,11 @@
 # VOX
 
+[![lint](https://github.com/ashina814/vox-engine/actions/workflows/lint.yml/badge.svg)](https://github.com/ashina814/vox-engine/actions/workflows/lint.yml)
+[![test](https://github.com/ashina814/vox-engine/actions/workflows/test.yml/badge.svg)](https://github.com/ashina814/vox-engine/actions/workflows/test.yml)
+[![python](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
+[![license](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-136%20fast%20%2B%203%20slow-brightgreen.svg)](#tests)
+
 **Singing Voice Conversion engine — SVC-first, SVS-ready.**
 
 VOX takes a vocal track and re-synthesises it in a target singer's voice
