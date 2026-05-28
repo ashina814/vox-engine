@@ -6,7 +6,10 @@
 
 1. Build conditioning via `ConditionAggregator` + `WhisperAwareConditioning`.
 2. Sample `t ~ Uniform[1, num_steps]` per batch item.
-3. `x_t, _, v_target = NoiseSchedule.add_noise(mel, t)`.
+3. `x_t, _, v_target = schedule.add_noise(mel, t)` — the schedule is either
+   Flow Matching (`x_t = (1-t)·mel + t·noise`, `v = noise - mel`, default) or
+   cosine-diffusion v-prediction, selected by
+   `VoxModelConfig.schedule_type`.
 4. `v_pred = DiffusionDecoder(x_t, t, cond)`.
 5. Masked L2 between `v_pred` and `v_target` over valid frames.
 

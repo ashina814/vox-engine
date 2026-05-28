@@ -19,6 +19,7 @@ Tensor contract on every batch:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Literal
 
 import torch
 from torch import Tensor, nn
@@ -26,9 +27,12 @@ from torch import Tensor, nn
 from vox.models.conditioning.aggregator import AggregatorConfig, ConditionAggregator
 from vox.models.conditioning.whisper_branch import WhisperAwareConditioning
 from vox.models.diffusion.decoder import DecoderConfig, DiffusionDecoder
+from vox.models.diffusion.flow_matching import FlowMatchingSampler, FlowMatchingSchedule
 from vox.models.diffusion.noise_schedule import NoiseSchedule
 from vox.models.diffusion.sampler import DDIMSampler
 from vox.models.vocoder.nsf_hifigan import NSFHifiGANWrapper
+
+ScheduleType = Literal["diffusion", "flow_matching"]
 
 
 @dataclass
@@ -39,6 +43,7 @@ class VoxModelConfig:
     n_styles: int = 3
     whisper_id: int = 1
     diffusion_steps: int = 1000
+    schedule_type: ScheduleType = "flow_matching"  # 2025 default: 1-step capable
     aggregator: AggregatorConfig = field(default_factory=lambda: AggregatorConfig())
     decoder: DecoderConfig = field(default_factory=lambda: DecoderConfig())
     vocoder_ckpt: str | None = None
@@ -61,8 +66,16 @@ class VoxModel(nn.Module):
         self.aggregator = ConditionAggregator(c.aggregator)
         self.whisper_branch = WhisperAwareConditioning(hidden=c.hidden, whisper_id=c.whisper_id)
         self.decoder = DiffusionDecoder(c.decoder)
-        self.schedule = NoiseSchedule(num_steps=c.diffusion_steps)
-        self.sampler = DDIMSampler(self.schedule)
+        if c.schedule_type == "flow_matching":
+            self.schedule = FlowMatchingSchedule(num_steps=c.diffusion_steps)
+            self.sampler = FlowMatchingSampler(self.schedule)
+            self._default_infer_steps = 4
+        elif c.schedule_type == "diffusion":
+            self.schedule = NoiseSchedule(num_steps=c.diffusion_steps)
+            self.sampler = DDIMSampler(self.schedule)
+            self._default_infer_steps = 50
+        else:
+            raise ValueError(f"Unknown schedule_type: {c.schedule_type!r}")
         self.vocoder = NSFHifiGANWrapper(
             ckpt_path=c.vocoder_ckpt, n_mels=c.n_mels, hop=c.hop, freeze=True
         )
@@ -140,8 +153,10 @@ class VoxModel(nn.Module):
         ref_mel: Tensor | None = None,
         speaker_id: Tensor | None = None,
         style_vec: Tensor | None = None,
-        num_steps: int = 50,
+        num_steps: int | None = None,
     ) -> dict[str, Tensor]:
+        if num_steps is None:
+            num_steps = self._default_infer_steps
         cond = self.build_cond(
             content=content,
             f0=f0,

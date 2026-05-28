@@ -111,14 +111,20 @@ Singing-MFA / aligner problem outright and makes the model language-agnostic
 "for free" — adding a language is purely a data question, not a model
 question.
 
-### 2. v-prediction over ε-prediction
-v-prediction (Salimans & Ho, 2022) keeps the target finite at both ends of
-the diffusion trajectory (ε would blow up at t=T, x₀ at t=0). Stability under
-the long Phase B fine-tune horizon is the priority.
+### 2. Flow Matching (default) — with diffusion as a fallback
+Following Lipman et al. (2022) and Liu et al. (2022, *Rectified Flow*), the
+default decoder is trained on a **linear conditional flow**:
+`x_t = (1-t)·x₀ + t·noise`, target velocity `v = noise - x₀`. Inference
+integrates the ODE with **4 Euler steps**, matching DDIM-50 quality at ~10×
+the speed (cf. FlashAudio 2025, RFWave 2025).
 
-### 3. Cosine schedule + DDIM K=50
-Cosine schedule gives a smoother α̅(t) than the linear default. K=50 DDIM
-steps matches the design budget (RTF < 0.5 on GPU).
+The legacy diffusion path (v-prediction + cosine schedule + DDIM K=50) is
+preserved as `schedule_type="diffusion"` for ablation and reproducibility.
+
+### 3. EMA weights + mixed precision
+Both standard in modern generative training. EMA (decay 0.999) wraps the
+trainer transparently and is used at inference. `bf16` autocast halves
+memory and compute on Ampere+ GPUs.
 
 ### 4. Discrete + continuous style
 The pipeline holds a single learnable embedding per style id **and** a
