@@ -27,10 +27,10 @@ from torch import Tensor, nn
 
 from vox.models.conditioning.aggregator import AggregatorConfig, ConditionAggregator
 from vox.models.conditioning.whisper_branch import WhisperAwareConditioning
+from vox.models.diffusion.ddim_sampler import DDIMSampler
 from vox.models.diffusion.decoder import DecoderConfig, DiffusionDecoder
 from vox.models.diffusion.flow_matching import FlowMatchingSampler, FlowMatchingSchedule
 from vox.models.diffusion.noise_schedule import NoiseSchedule
-from vox.models.diffusion.sampler import DDIMSampler
 from vox.models.vocoder.nsf_hifigan import NSFHifiGANWrapper
 
 ScheduleType = Literal["diffusion", "flow_matching"]

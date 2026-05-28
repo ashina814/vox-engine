@@ -4,13 +4,22 @@
 [![test](https://github.com/ashina814/vox-engine/actions/workflows/test.yml/badge.svg)](https://github.com/ashina814/vox-engine/actions/workflows/test.yml)
 [![python](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
 [![license](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
-[![tests](https://img.shields.io/badge/tests-161%20fast%20%2B%203%20slow-brightgreen.svg)](#tests)
+[![tests](https://img.shields.io/badge/tests-166%20collected-brightgreen.svg)](#tests)
 
 **Singing Voice Conversion engine — SVC-first, SVS-ready.**
 
 VOX takes a vocal track and re-synthesises it in a target singer's voice
 (and optional style), preserving phrasing while exposing user-controlled
 musical knobs (auto-tune, style blend).
+
+> 🚧 **No trained checkpoint is distributed yet.** Phase A (this
+> repository) builds the *engine*: data pipeline, model, training loop,
+> inference pipeline, GUI, evaluation, tests, docs. The NSF-HiFiGAN
+> vocoder ships as a placeholder generator; until a real checkpoint is
+> loaded and an acoustic model has been trained on real singing data,
+> the audio output is **structural smoke only**, not listenable music.
+> Phase B (post-grant) records ~5.5h of singing, trains the production
+> model, and releases the first listenable demos.
 
 > ⚠️ Voice synthesis is dual-use technology. Before using or
 > redistributing this engine, read
@@ -27,15 +36,19 @@ design spec is implemented, tested, and runnable without a GPU:
 | Block | Status | Tests |
 |---|---|---|
 | A1 Repo, CI, pyproject | ✅ | — |
-| A2 Data pipeline (mel/f0/uv/content/loudness, chunking, QA, Dataset, preprocess CLI) | ✅ | 37 |
-| A3 Models (Aggregator, GST, Whisper branch, Diffusion / Flow Matching decoder, Vocoder wrapper, VoxModel) | ✅ | 36 |
-| A4 Training (Trainer, losses, optim, logging, ckpt, EMA, bf16) | ✅ | 25 |
+| A2 Data pipeline (mel/f0/uv/content/loudness, chunking, QA, Dataset, preprocess CLI) | ✅ | 41 |
+| A3 Models (Aggregator, GST, Whisper branch, Diffusion / Flow Matching decoder, Vocoder wrapper, VoxModel, EMA inference) | ✅ | 39 |
+| A4 Training (Trainer, losses, optim, logging, ckpt, EMA + warmup, bf16) | ✅ | 25 |
 | A5 Inference (Pipeline, Auto-Tune, Style blend, CLI) | ✅ | 27 |
 | A6 Gradio GUI | ✅ | 3 |
 | A7 Evaluation (MCD, F0 RMSE, UV err, Style separability, Benchmark) | ✅ | 23 |
-| A8 Tests | ✅ (161 fast + 2 CUDA-skip + 3 slow) | — |
+| **A8 Test totals (pytest --collect-only)** | ✅ | **166 collected** |
 | A9 Docs | ✅ | — |
-| OpenSinger baseline training (MA-5) | pending (Phase B) | — |
+| OpenSinger baseline training + listenable demo (MA-5) | pending (Phase B) | — |
+
+Test breakdown: **161 fast + 3 slow + 2 CUDA-only** (the CUDA-only pair
+auto-skips on machines without GPU; everything else passes on CPU in
+~15 s). Run `uv run --no-sync pytest tests/ --collect-only -q` to verify.
 
 Phase B (post-grant) records ~5.5h of own singing, fine-tunes the
 NSF-HiFiGAN vocoder, runs the production training schedule, releases 3

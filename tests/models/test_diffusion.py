@@ -1,8 +1,8 @@
 import torch
 
+from vox.models.diffusion.ddim_sampler import DDIMSampler
 from vox.models.diffusion.decoder import DecoderConfig, DiffusionDecoder
 from vox.models.diffusion.noise_schedule import NoiseSchedule, cosine_alpha_bar
-from vox.models.diffusion.sampler import DDIMSampler
 
 
 def test_cosine_alpha_bar_monotonic():

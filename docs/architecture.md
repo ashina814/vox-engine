@@ -1,9 +1,20 @@
 # Architecture
 
 VOX is a **Singing Voice Conversion (SVC)** engine designed to be extensible
-into full SVS (score → song) later. The decoder is a **Shallow Diffusion**
-model with **v-prediction**, conditioned on self-supervised content features,
-F0, voicing, loudness, and a learnable style embedding.
+into full SVS (score → song) later. The default decoder is trained with
+**Flow Matching** (Lipman 2022 / Liu 2022) and sampled with **4 Euler steps**;
+a legacy diffusion path (v-prediction + cosine + DDIM K=50) is preserved
+behind `schedule_type="diffusion"` for ablation. The decoder is conditioned
+on self-supervised content features, F0, voicing, loudness, and a learnable
+style embedding.
+
+> 🚧 **Phase A status**: this repository ships **no trained checkpoint**
+> and the NSF-HiFiGAN vocoder defaults to a placeholder generator. The
+> entire engine wires together end-to-end (139 tests + 27 CUDA / slow
+> tests pass), but generated audio is **structural smoke only** until
+> Phase B trains an acoustic model on real singing and a real vocoder
+> checkpoint is loaded. See [README §Status](../README.md#status) and
+> [MODEL_CARD.md](../MODEL_CARD.md) for what this means in practice.
 
 ## Data flow
 
