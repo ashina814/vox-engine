@@ -115,8 +115,15 @@ question.
 Following Lipman et al. (2022) and Liu et al. (2022, *Rectified Flow*), the
 default decoder is trained on a **linear conditional flow**:
 `x_t = (1-t)·x₀ + t·noise`, target velocity `v = noise - x₀`. Inference
-integrates the ODE with **4 Euler steps**, matching DDIM-50 quality at ~10×
-the speed (cf. FlashAudio 2025, RFWave 2025).
+integrates the ODE with a small number of Euler steps (default K=4).
+
+Honest framing: this is a *few-step* setup, not 1-step. True 1-step
+inference (FlashAudio 2025) requires an additional Rectified-Flow
+distillation pass that we do not perform. Flow Matching is also not yet
+a clear winner over diffusion in the audio domain — see FlowSE
+(Interspeech 2025) for limitation discussions. Our choice is "modern
+recipe with a reasonable few-step inference budget", not "state of the
+art audio synthesis".
 
 The legacy diffusion path (v-prediction + cosine schedule + DDIM K=50) is
 preserved as `schedule_type="diffusion"` for ablation and reproducibility.

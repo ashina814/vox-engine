@@ -44,7 +44,7 @@ class VoxModelConfig:
     n_styles: int = 3
     whisper_id: int = 1
     diffusion_steps: int = 1000
-    schedule_type: ScheduleType = "flow_matching"  # 2025 default: 1-step capable
+    schedule_type: ScheduleType = "flow_matching"  # few-step Euler sampler (default K=4)
     aggregator: AggregatorConfig = field(default_factory=lambda: AggregatorConfig())
     decoder: DecoderConfig = field(default_factory=lambda: DecoderConfig())
     vocoder_ckpt: str | None = None

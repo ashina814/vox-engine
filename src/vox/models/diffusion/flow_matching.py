@@ -42,7 +42,16 @@ class FlowMatchingSchedule:
         return self
 
     def _t_continuous(self, t: Tensor) -> Tensor:
-        """Map discrete t in [1, num_steps] to continuous t' in (0, 1]."""
+        """Map discrete t in [1, num_steps] to continuous t' in (0, 1].
+
+        Note: the *decoder* still receives the integer ``t`` from the trainer
+        / sampler. Sinusoidal time embeddings handle integer and float inputs
+        identically (they multiply by frequencies), so passing int t with a
+        large num_steps is equivalent to passing continuous t with a matching
+        time scale. This matches the diffusers / FlashAudio convention.
+        Continuous t is only used here, internally, to compute x_t and
+        v_target in [0, 1] coordinates.
+        """
         return t.float() / float(self.num_steps)
 
     def add_noise(
@@ -68,10 +77,12 @@ class FlowMatchingSchedule:
 class FlowMatchingSampler:
     """Euler integrator over the learned velocity field.
 
-    K=4 default steps matches FlashAudio's reported best-quality budget for
-    rectified-flow audio generation. The numeric speedup over DDIM K=50 is
-    roughly 10x at comparable quality once the model has been trained with
-    the matching schedule.
+    K=4 default Euler steps is a pragmatic budget — short enough to be
+    materially faster than DDIM K=50, long enough not to require the
+    Rectified-Flow distillation pass that FlashAudio (2025) used for its
+    1-step results. Real wall-clock advantage depends on decoder cost per
+    step, and few-step Flow Matching is not yet a settled win over
+    diffusion in the singing-voice-conversion literature specifically.
     """
 
     def __init__(self, schedule: FlowMatchingSchedule) -> None:
