@@ -28,7 +28,12 @@ class InferenceRequest:
     target_mode: Literal["major", "minor"] = "major"
     style_weights: tuple[float, ...] = (1.0, 0.0, 0.0)
     autotune_strength: float = 0.8
-    num_diffusion_steps: int = 50
+    # None lets the model pick its native budget — K=4 under Flow Matching,
+    # K=50 under DDIM. Pinning a number here previously forced the legacy 50
+    # even for Flow Matching, throwing away the whole point of the few-step
+    # sampler. Override only when you intentionally want a non-native step
+    # count (e.g. quality/latency probing).
+    num_sampling_steps: int | None = None
     ref_mel: np.ndarray | None = None  # optional GST reference (n_mels, T_ref)
 
 
@@ -124,6 +129,15 @@ class InferencePipeline:
         if req.ref_mel is not None:
             ref_mel = torch.from_numpy(req.ref_mel.astype(np.float32)).unsqueeze(0).to(self.device)
 
+        # When the caller passes None, fall through to the model's native
+        # step budget — K=4 for Flow Matching, K=50 for DDIM. We resolve the
+        # actual value here so the metadata can report what really ran.
+        steps_used = (
+            req.num_sampling_steps
+            if req.num_sampling_steps is not None
+            else self.model._default_infer_steps
+        )
+
         out = self.model.infer(
             content=content.unsqueeze(0),
             f0=f0_t.unsqueeze(0),
@@ -132,7 +146,7 @@ class InferencePipeline:
             style_id=torch.zeros(1, dtype=torch.long, device=self.device),
             style_vec=style_vec,
             ref_mel=ref_mel,
-            num_steps=req.num_diffusion_steps,
+            num_steps=steps_used,
         )
 
         wav_out = out["wav"].squeeze(0).detach().cpu().numpy().astype(np.float32)
@@ -144,7 +158,8 @@ class InferencePipeline:
             metadata={
                 "elapsed_s": elapsed,
                 "rtf": elapsed / max(len(wav_out) / self.sr, 1e-6),
-                "num_diffusion_steps": req.num_diffusion_steps,
+                "num_sampling_steps": steps_used,
+                "schedule_type": self.model.cfg.schedule_type,
                 "style_weights": list(req.style_weights),
                 "autotune_applied": req.target_key is not None,
                 "T_mel": T,

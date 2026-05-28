@@ -43,18 +43,22 @@ def build_app(pipeline: InferencePipeline, n_styles: int = 3):
             return None, "No input audio provided."
         weights = _normalize(list(style_sliders))
         key = None if target_key in (None, "None", "") else target_key
+        # ``num_steps == 0`` from the slider means "let the model decide" —
+        # this maps to the InferenceRequest's None default (K=4 under FM).
+        steps_override = int(num_steps) if int(num_steps) > 0 else None
         req = InferenceRequest(
             input_wav=Path(input_path),
             target_key=key,
             autotune_strength=float(autotune_strength),
-            num_diffusion_steps=int(num_steps),
+            num_sampling_steps=steps_override,
             style_weights=weights,
         )
         res = pipeline(req)
         info = (
             f"styles={[round(w, 3) for w in weights]}  "
             f"rtf={res.metadata.get('rtf', float('nan')):.2f}  "
-            f"steps={res.metadata.get('num_diffusion_steps')}"
+            f"steps={res.metadata.get('num_sampling_steps')}  "
+            f"schedule={res.metadata.get('schedule_type')}"
         )
         return (res.sr, res.output_wav.astype(np.float32)), info
 
@@ -70,7 +74,13 @@ def build_app(pipeline: InferencePipeline, n_styles: int = 3):
                 label="Target key (None = no Auto-Tune)",
             )
             autotune = gr.Slider(0.0, 1.0, value=0.8, label="Auto-Tune strength")
-            num_steps = gr.Slider(1, 100, value=50, step=1, label="Diffusion steps")
+            num_steps = gr.Slider(
+                0,
+                100,
+                value=0,
+                step=1,
+                label="Sampling steps (0 = model default: 4 for FM, 50 for DDIM)",
+            )
         style_sliders = []
         with gr.Row():
             for i, label in enumerate(style_labels):

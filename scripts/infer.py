@@ -3,7 +3,7 @@
 Usage:
     uv run python scripts/infer.py input_wav=path/to.wav output_wav=out.wav
     uv run python scripts/infer.py input_wav=in.wav output_wav=out.wav \
-        inference.target_key=D inference.num_diffusion_steps=20
+        inference.target_key=D inference.num_sampling_steps=20
 
 Notes:
 - ``ckpt_path`` (optional): VoxModel state_dict checkpoint. When omitted, an
@@ -79,7 +79,7 @@ def main(cfg: DictConfig) -> None:
         sr=cfg.audio.sr,
         target_key=cfg.inference.target_key,
         autotune_strength=cfg.inference.autotune_strength,
-        num_diffusion_steps=cfg.inference.num_diffusion_steps,
+        num_sampling_steps=cfg.inference.get("num_sampling_steps"),
         style_weights=tuple(style_weights),
     )
     res = pipeline(req)

@@ -17,12 +17,12 @@ result = pipeline(InferenceRequest(
     target_mode="major",
     style_weights=(0.6, 0.0, 0.4),
     autotune_strength=0.8,
-    num_diffusion_steps=50,
+    num_sampling_steps=50,
     ref_mel=None,  # or (n_mels, T_ref) for GST
 ))
 
 # result.output_wav: np.float32, sr=44_100
-# result.metadata: {"elapsed_s", "rtf", "num_diffusion_steps",
+# result.metadata: {"elapsed_s", "rtf", "num_sampling_steps",
 #                   "style_weights", "autotune_applied", "T_mel"}
 ```
 
@@ -72,7 +72,7 @@ discrete `style_emb` lookup.
 uv run python scripts/infer.py input_wav=in.wav output_wav=out.wav
 uv run python scripts/infer.py input_wav=in.wav output_wav=out.wav \
     inference.target_key=D \
-    inference.num_diffusion_steps=30 \
+    inference.num_sampling_steps=30 \
     inference.style_weights="[0.6, 0.4, 0.0]"
 uv run python scripts/infer.py input_wav=in.wav output_wav=out.wav \
     +ckpt_path=ckpts/step_00010000.pt
@@ -86,5 +86,5 @@ meaningless in that mode.
 
 `scripts/ui.py` launches a gradio frontend (`vox.ui.gradio_app`). Sliders
 expose every `InferenceRequest` field: target key dropdown,
-`autotune_strength`, `num_diffusion_steps`, and one slider per style class
+`autotune_strength`, `num_sampling_steps`, and one slider per style class
 (weights are normalised at submit time).

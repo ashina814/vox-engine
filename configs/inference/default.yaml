@@ -1,6 +1,8 @@
-num_diffusion_steps: 50
+# null = use the model's native sampling budget
+# (K=4 under Flow Matching, K=50 under the legacy DDIM schedule).
+# Override only when intentionally probing quality vs. latency.
+num_sampling_steps: null
 autotune_strength: 0.8
 target_key: "C"
 style_weights: [1.0, 0.0, 0.0]
 skip_content: false
-
