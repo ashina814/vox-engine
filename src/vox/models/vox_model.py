@@ -18,6 +18,7 @@ Tensor contract on every batch:
 
 from __future__ import annotations
 
+from contextlib import nullcontext
 from dataclasses import dataclass, field
 from typing import Literal
 
@@ -79,6 +80,12 @@ class VoxModel(nn.Module):
         self.vocoder = NSFHifiGANWrapper(
             ckpt_path=c.vocoder_ckpt, n_mels=c.n_mels, hop=c.hop, freeze=True
         )
+
+        # Optional EMA hook. Set externally (Trainer or ckpt loader) so that
+        # infer() uses the EMA-averaged weights instead of the raw training-
+        # step weights. Without this assignment, EMA shadow values would
+        # never reach inference.
+        self.ema = None
 
     # ------------------------------------------------------------------
     # Conditioning
@@ -154,22 +161,35 @@ class VoxModel(nn.Module):
         speaker_id: Tensor | None = None,
         style_vec: Tensor | None = None,
         num_steps: int | None = None,
+        use_ema: bool = True,
     ) -> dict[str, Tensor]:
         if num_steps is None:
             num_steps = self._default_infer_steps
-        cond = self.build_cond(
-            content=content,
-            f0=f0,
-            uv=uv,
-            loudness=loudness,
-            style_id=style_id,
-            ref_mel=ref_mel,
-            speaker_id=speaker_id,
-            style_vec=style_vec,
-        )
-        B, _, T = cond.shape
-        mel = self.sampler.sample(
-            self.decoder, cond, shape=(B, self.cfg.n_mels, T), num_steps=num_steps
-        )
-        wav = self.vocoder(mel, f0)
+
+        # When EMA shadow weights have been attached (by the Trainer or by a
+        # checkpoint loader), use those for inference instead of the live
+        # training-step parameters. This is the half of EMA that actually
+        # matters: without it the shadow values are accumulated but never
+        # read.
+        if use_ema and self.ema is not None:
+            ema_ctx = self.ema.swap_in(self)
+        else:
+            ema_ctx = nullcontext()
+
+        with ema_ctx:
+            cond = self.build_cond(
+                content=content,
+                f0=f0,
+                uv=uv,
+                loudness=loudness,
+                style_id=style_id,
+                ref_mel=ref_mel,
+                speaker_id=speaker_id,
+                style_vec=style_vec,
+            )
+            B, _, T = cond.shape
+            mel = self.sampler.sample(
+                self.decoder, cond, shape=(B, self.cfg.n_mels, T), num_steps=num_steps
+            )
+            wav = self.vocoder(mel, f0)
         return {"mel": mel, "wav": wav}

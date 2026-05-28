@@ -71,10 +71,14 @@ class VoxTrainer:
         self.global_step = 0
         self.cfg.ckpt_dir = Path(self.cfg.ckpt_dir)
 
-        # EMA of model weights (disabled when decay <= 0)
+        # EMA of model weights (disabled when decay <= 0). Attaching the
+        # shadow to ``model.ema`` lets VoxModel.infer() pick it up at
+        # inference time — without that step the EMA copy is never read.
         self.ema: ExponentialMovingAverage | None = None
         if cfg.ema_decay > 0:
             self.ema = ExponentialMovingAverage(self.model, decay=cfg.ema_decay).to(self.device)
+            if hasattr(self.model, "ema"):
+                self.model.ema = self.ema
 
         # Mixed precision support. bf16 is preferred (no GradScaler needed,
         # wider dynamic range than fp16 — important for diffusion-style targets).
@@ -130,12 +134,21 @@ class VoxTrainer:
         self.model.eval()
         sums: dict[str, float] = {}
         n = 0
-        for batch in islice(self.val_loader, self.cfg.val_batches):
-            batch = _move_to_device(batch, self.device)
-            losses = self.model.training_step(batch)
-            for k, v in losses.items():
-                sums[k] = sums.get(k, 0.0) + float(v)
-            n += 1
+
+        # Validation must score the *deployable* model — i.e. the EMA
+        # weights, since that's what infer() uses. Without this swap the
+        # numbers logged here track the noisier training-step weights and
+        # under-report real quality.
+        ema_ctx = self.ema.swap_in(self.model) if self.ema is not None else nullcontext()
+
+        with ema_ctx:
+            for batch in islice(self.val_loader, self.cfg.val_batches):
+                batch = _move_to_device(batch, self.device)
+                losses = self.model.training_step(batch)
+                for k, v in losses.items():
+                    sums[k] = sums.get(k, 0.0) + float(v)
+                n += 1
+
         self.model.train()
         if n == 0:
             return {}

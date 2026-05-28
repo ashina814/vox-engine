@@ -38,6 +38,12 @@ def main(cfg: DictConfig) -> None:
     if ckpt:
         state = torch.load(ckpt, map_location="cpu", weights_only=False)
         model.load_state_dict(state["model"] if "model" in state else state)
+        if isinstance(state, dict) and "ema" in state:
+            from vox.training.ema import ExponentialMovingAverage
+
+            ema = ExponentialMovingAverage(model, decay=0.999)
+            ema.load_state_dict(state["ema"])
+            model.ema = ema
 
     f0 = F0Extractor(backend="torchcrepe", hop=cfg.audio.hop, sr=cfg.audio.sr)
     content_fn = _build_content_fn(skip=bool(cfg.get("ui", {}).get("skip_content", False)))
