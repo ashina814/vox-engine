@@ -42,12 +42,13 @@ Input WAV
                                   └──────────────┬───────────────┘
                                                  │  cond (B, hidden, T)
                                                  ▼
-                                  ┌────────────────────────────┐
-                                  │ Diffusion Decoder (U-Net1D) │
-                                  │   · v-prediction            │
-                                  │   · cosine schedule         │
-                                  │   · DDIM K=50 sampling      │
-                                  └──────────────┬─────────────┘
+                                  ┌────────────────────────────────┐
+                                  │ Decoder (U-Net1D)              │
+                                  │   · Flow Matching (default)    │
+                                  │     Euler K=4 sampling         │
+                                  │   · DDIM K=50 (legacy fallback,│
+                                  │     schedule_type="diffusion") │
+                                  └──────────────┬────────────────┘
                                                  │  mel (B, 128, T)
                                                  ▼
                                   ┌────────────────────────────┐
@@ -92,8 +93,9 @@ src/vox/
 │   │   └── whisper_branch.py        # WhisperAwareConditioning
 │   ├── diffusion/
 │   │   ├── decoder.py               # U-Net1D, ResBlock1D, sinusoidal t-emb
-│   │   ├── noise_schedule.py        # cosine α̅, v-prediction targets
-│   │   └── sampler.py               # DDIM K=50
+│   │   ├── flow_matching.py         # linear flow schedule + Euler sampler (default, K=4)
+│   │   ├── noise_schedule.py        # cosine α̅, v-prediction targets (legacy)
+│   │   └── ddim_sampler.py          # DDIM K=50 (legacy fallback)
 │   ├── vocoder/nsf_hifigan.py       # wrapper + placeholder generator
 │   └── vox_model.py                 # integrated model
 ├── training/                        # § training.md
